@@ -1,25 +1,27 @@
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Configurar servicios
+builder.Services.AddControllers(); // Agrega soporte para controladores
+builder.Services.AddEndpointsApiExplorer(); // Habilita la exploración de endpoints para Swagger
+builder.Services.AddSwaggerGen(); // Configura Swagger para la documentación
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
+// Construir aplicación
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configuración del pipeline de middleware
 if (app.Environment.IsDevelopment())
 {
+    // Habilita Swagger y la interfaz de usuario de Swagger solo en el entorno de desarrollo
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+app.UseHttpsRedirection(); // Redirecciona automáticamente a HTTPS si se usa HTTP
+app.UseAuthorization(); // Configura la autorización
 
-app.UseAuthorization();
-
+// Configura las rutas de los controladores
 app.MapControllers();
 
+// Ejecutar la aplicación
 app.Run();
+
