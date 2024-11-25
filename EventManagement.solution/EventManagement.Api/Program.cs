@@ -1,27 +1,34 @@
+using EventManagement.Api.Interfaces;
+using EventManagement.Api.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Configurar servicios
-builder.Services.AddControllers(); // Agrega soporte para controladores
-builder.Services.AddEndpointsApiExplorer(); // Habilita la exploración de endpoints para Swagger
-builder.Services.AddSwaggerGen(); // Configura Swagger para la documentación
+// Agregar servicios al contenedor.
+builder.Services.AddControllers();
 
-// Construir aplicación
+// Registrar la interfaz y su implementación.
+builder.Services.AddScoped<IEventService, EventService>();
+
+// Configuración de Swagger para documentación.
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 var app = builder.Build();
 
-// Configuración del pipeline de middleware
+// Configurar la tubería HTTP.
 if (app.Environment.IsDevelopment())
 {
-    // Habilita Swagger y la interfaz de usuario de Swagger solo en el entorno de desarrollo
+    app.UseDeveloperExceptionPage();
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection(); // Redirecciona automáticamente a HTTPS si se usa HTTP
-app.UseAuthorization(); // Configura la autorización
+app.UseHttpsRedirection();
 
-// Configura las rutas de los controladores
+app.UseAuthorization();
+
 app.MapControllers();
 
-// Ejecutar la aplicación
 app.Run();
+
 

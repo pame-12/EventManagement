@@ -1,0 +1,61 @@
+﻿@page "/events/edit/{id:int}"
+@using EventManagement.Client.Services
+@using EventManagement.Client.Models
+@inject EventService EventService
+@inject NavigationManager NavigationManager
+
+<h3>Editar Evento</h3>
+
+@if (eventToEdit == null)
+{
+    <p>Cargando evento...</p>
+}
+else
+{
+    <EditForm Model="eventToEdit" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <div>
+            <label>Nombre:</label>
+            <InputText @bind-Value="eventToEdit.Name" />
+        </div>
+        <div>
+            <label>Descripción:</label>
+            <InputText @bind-Value="eventToEdit.Description" />
+        </div>
+        <div>
+            <label>Fecha de Inicio:</label>
+            <InputDate @bind-Value="eventToEdit.StartDate" />
+        </div>
+        <div>
+            <label>Fecha de Fin:</label>
+            <InputDate @bind-Value="eventToEdit.EndDate" />
+        </div>
+        <button type="submit">Guardar</button>
+    </EditForm>
+}
+
+@code {
+    [Parameter]
+    public int id { get; set; }
+
+    private Event? eventToEdit;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Cargar el evento a editar
+        eventToEdit = await EventService.GetEventByIdAsync(id);
+    }
+
+    // Asegúrate de que la función tenga el tipo Task
+    private async Task HandleValidSubmit()
+    {
+        if (eventToEdit != null)
+        {
+            // Actualizar el evento
+            await EventService.UpdateEventAsync(eventToEdit);
+            // Navegar de vuelta a la lista de eventos
+            NavigationManager.NavigateTo("/events");
+        }
+    }
+}

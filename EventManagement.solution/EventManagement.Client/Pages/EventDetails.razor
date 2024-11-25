@@ -1,0 +1,32 @@
+﻿@page "/events/details/{id:int}"
+@using EventManagement.Client.Services
+@inject EventService EventService
+
+<h3>Detalles del Evento</h3>
+
+@if (eventDetails == null)
+{
+    <p>Cargando evento...</p>
+}
+else
+{
+    <div>
+        <p><strong>Nombre:</strong> @eventDetails.Name</p>
+        <p><strong>Descripción:</strong> @eventDetails.Description</p>
+        <p><strong>Fecha de Inicio:</strong> @eventDetails.StartDate.ToShortDateString()</p>
+        <p><strong>Fecha de Fin:</strong> @eventDetails.EndDate.ToShortDateString()</p>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int id { get; set; }
+
+    private Models.Event? eventDetails;
+
+    protected override async Task OnInitializedAsync()
+    {
+        eventDetails = await EventService.GetEventByIdAsync(id);
+    }
+}
+

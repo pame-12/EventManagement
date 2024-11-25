@@ -1,0 +1,44 @@
+﻿@page "/events/create"
+@using EventManagement.Client.Services
+@using EventManagement.Client.Models
+@inject EventService EventService
+@inject NavigationManager NavigationManager
+
+<h3>Crear Evento</h3>
+
+<EditForm Model="newEvent" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div>
+        <label>Nombre:</label>
+        <InputText @bind-Value="newEvent.Name" class="form-control" />
+    </div>
+    <div>
+        <label>Descripción:</label>
+        <InputText @bind-Value="newEvent.Description" class="form-control" />
+    </div>
+    <div>
+        <label>Fecha de Inicio:</label>
+        <InputDate @bind-Value="newEvent.StartDate" class="form-control" />
+    </div>
+    <div>
+        <label>Fecha de Fin:</label>
+        <InputDate @bind-Value="newEvent.EndDate" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Guardar</button>
+</EditForm>
+
+@code {
+    private Event newEvent = new Event()
+    {
+
+        Name = string.Empty,
+        Description = string.Empty
+    };
+
+    private async Task HandleValidSubmit()
+    {
+        await EventService.CreateEventAsync(newEvent);
+        NavigationManager.NavigateTo("/events");
+    }
+}

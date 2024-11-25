@@ -1,0 +1,66 @@
+﻿@page "/events"
+@using EventManagement.Client.Services
+@inject EventService EventService
+@inject NavigationManager NavigationManager
+
+<h3>Lista de Eventos</h3>
+
+@if (events == null)
+{
+    <p>Cargando eventos...</p>
+}
+else if (!events.Any())
+{
+    <p>No hay eventos disponibles.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Inicio</th>
+                <th>Fin</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var eventItem in events)
+            {
+                <tr>
+                    <td>@eventItem.Id</td>
+                    <td>@eventItem.Name</td>
+                    <td>@eventItem.Description</td>
+                    <td>@eventItem.StartDate.ToShortDateString()</td>
+                    <td>@eventItem.EndDate.ToShortDateString()</td>
+                    <td>
+                        <button @onclick="(() => NavigateToEdit(eventItem.Id))">Editar</button>
+                        <button @onclick="(() => DeleteEvent(eventItem.Id))">Eliminar</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Models.Event>? events;
+
+    protected override async Task OnInitializedAsync()
+    {
+        events = await EventService.GetEventsAsync();
+    }
+
+    private void NavigateToEdit(int id)
+    {
+        NavigationManager.NavigateTo($"/events/edit/{id}");
+    }
+
+    private async Task DeleteEvent(int id)
+    {
+        await EventService.DeleteEventAsync(id);
+        events = await EventService.GetEventsAsync();
+    }
+}
